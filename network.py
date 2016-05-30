@@ -12,36 +12,24 @@ from netlayers import DenseLayer, ConvPoolLayer
 class Network(object):
 
     def __init__(self, params, input=tt.tensor4('x')):
-        self.rng = np.random.RandomState(1234)
         self.input = input
 
         self.layer0 = ConvPoolLayer(
             input=self.input,
             filter_shape=params['layer0']['filter_shape'],
-            image_shape=params['layer0']['image_shape'],
-            W_values=self._init_W(params['layer0']['filter_shape']),
-            b_values=np.zeros((params['layer0']['filter_shape'][0],),
-                                 dtype=theano.config.floatX)
+            image_shape=params['layer0']['image_shape']
         )
 
         self.layer1 = DenseLayer(
             input=self.layer0.output.flatten(2),
-            n_in=params['layer1']['n_in'],
-            n_out=params['layer1']['n_out'],
-            W_values=self._init_W((params['layer1']['n_in'],
-                                   params['layer1']['n_out'])),
-            b_values=np.zeros((params['layer1']['n_out'],),
-                              dtype=theano.config.floatX)
+            in_size=params['layer1']['n_in'],
+            out_size=params['layer1']['n_out']
         )
 
         self.out_layer = DenseLayer(
             input=self.layer1.output,
-            n_in=params['out']['n_in'],
-            n_out=params['out']['n_out'],
-            W_values=self._init_W((params['out']['n_in'],
-                                   params['out']['n_out'])),
-            b_values=np.zeros((params['out']['n_out'],),
-                              dtype=theano.config.floatX),
+            in_size=params['out']['n_in'],
+            out_size=params['out']['n_out'],
             activation=None
         )
 
@@ -49,20 +37,7 @@ class Network(object):
         self.y_pred = tt.argmax(self.p_y_given_x, axis=1)
         self.params = (self.layer0.params + self.layer1.params +
                        self.out_layer.params)
-
-    def _init_W(self, shape):
-        if len(shape) == 4:
-            fan_in = np.prod(shape[1:])
-            fan_out = (shape[0] * np.prod(shape[2:]) / 4)
-        else:
-            fan_in = shape[0]
-            fan_out = shape[1]
-
-        W_bound = np.sqrt(6. / (fan_in + fan_out))
-        return np.asarray(
-            self.rng.uniform(low=-W_bound, high=W_bound, size=shape),
-            dtype=theano.config.floatX
-        )
+    
 
     def negative_log_likehood(self, y):
         return -tt.mean(tt.log(self.p_y_given_x)[tt.arange(y.shape[0]), y])
