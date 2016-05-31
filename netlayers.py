@@ -79,9 +79,18 @@ class LSTMLayer(object):
     def __init__(self, input, in_size, out_size):
         self.input = input
 
-        self.W = self._init((in_size, out_size * 4))
-        self.U = self._init((in_size, out_size * 4))
-        self.b = np.zeros(out_size, dtype=theano.config.floatX)
+        self.W = theano.shared(
+            value=self._init((in_size, out_size * 4)),
+            name='W', borrow=True
+        )
+        self.U = theano.shared(
+            value=self._init((out_size, out_size * 4)),
+            name='U', borrow=True
+        )
+        self.b = theano.shared(
+            value=np.zeros(out_size * 4, dtype=theano.config.floatX),
+            name='b', borrow=True
+        )
 
         def slice(x, n, dim):
             return x[n * dim:(n + 1) * dim]
@@ -103,8 +112,8 @@ class LSTMLayer(object):
         tmp = tt.dot(self.input, self.W) + self.b
 
         vals, _ = theano.scan(step, sequences=[tmp], outputs_info=[
-            tt.alloc(np.asarray(0., dtype=theano.config.floatX), out_size),
-            tt.alloc(np.asarray(0., dtype=theano.config.floatX), out_size)
+            np.zeros((out_size,), dtype=theano.config.floatX),
+            np.zeros((out_size,), dtype=theano.config.floatX),
         ])
 
         self.output = vals[0]
@@ -126,7 +135,7 @@ class CTCLayer(object):
             big_I = tt.eye(size+2)
             return (
                 tt.eye(size) + big_I[2:,1:-1] + big_I[2:,:-2] *
-                (tt.arange(size) % 2)
+                tt.cast(tt.arange(size) % 2, 'float32')
             )
 
         P = tt.nnet.softmax(self.input)[:, y]
@@ -138,7 +147,7 @@ class CTCLayer(object):
         probs,_ = theano.scan(
             step,
             sequences = [P],
-            outputs_info = [T.eye(Y.shape[0])[0]]
+            outputs_info = [tt.eye(y.shape[0])[0]]
         )
 
         self.output = probs
