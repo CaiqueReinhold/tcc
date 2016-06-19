@@ -17,13 +17,15 @@ class Network(object):
         self.layer0 = ConvPoolLayer(
             input=self.input,
             filter_shape=params['layer0']['filter_shape'],
-            image_shape=params['layer0']['image_shape']
+            image_shape=params['layer0']['image_shape'],
+            activation=tt.nnet.relu
         )
 
         self.layer1 = DenseLayer(
             input=self.layer0.output.flatten(2),
             in_size=params['layer1']['n_in'],
-            out_size=params['layer1']['n_out']
+            out_size=params['layer1']['n_out'],
+            activation=tt.nnet.relu
         )
 
         self.out_layer = DenseLayer(
@@ -110,8 +112,9 @@ class Network(object):
 
         while (epoch < n_epochs) and (not done_looping):
             epoch += 1
+            costs = []
             for index in xrange(train_set_size):
-                train_model(index)
+                costs.append(train_model(index))
 
             iter = (epoch - 1) * train_set_size + index
             if (iter + 1) % validation_frequency == 0:
@@ -119,12 +122,13 @@ class Network(object):
                                      in xrange(valid_set_size)]
                 this_validation_loss = np.mean(validation_losses)
                 print(
-                'epoch %i, minibatch %i/%i, validation error %f %%' %
+                'epoch %i, minibatch %i/%i, validation error %f %%, mean cost %f' %
                     (
                         epoch,
                         index + 1,
                         train_set_size,
-                        this_validation_loss * 100.
+                        this_validation_loss * 100.,
+                        np.mean(cost)
                     )
                 )
 

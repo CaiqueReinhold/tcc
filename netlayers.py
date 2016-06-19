@@ -10,14 +10,16 @@ RNG = np.random.RandomState(1234)
 
 class DenseLayer(object):
 
-    def __init__(self, input, in_size, out_size, W_values=None, b_values=None,
+    def __init__(self, input, in_size, out_size, params=None,
                  activation=tt.tanh):
         self.input = input
 
-        if W_values is None:
+        if params is None:
             W_values = self._init((in_size, out_size))
-        if b_values is None:
             b_values = np.zeros((out_size,), dtype=theano.config.floatX)
+        else:
+            W_values = params[0]
+            b_values = params[1]
 
         self.W = theano.shared(value=W_values, name='W', borrow=True)
         self.b = theano.shared(value=b_values, name='b', borrow=True)
@@ -37,33 +39,47 @@ class DenseLayer(object):
 
 class ConvPoolLayer(object):
 
-    def __init__(self, input, filter_shape, image_shape,
-                 W_values, b_values, poolsize=(2, 2)):
+    def __init__(self, filter_shape, image_shape, params=None,
+                 poolsize=(2, 2), activation=tt.tanh):
         assert image_shape[1] == filter_shape[1]
-        self.input = input
+
+        if params is None:
+            W_values = self._init(filter_shape)
+            b_values = np.zeros((filter_shape[0],),
+                                dtype=theano.config.floatX)
+        else:
+            W_values = params[0]
+            b_values = params[1]
 
         self.W = theano.shared(value=W_values, name='W', borrow=True)
         self.b = theano.shared(value=b_values, name='b', borrow=True)
 
+        self.filter_shape = filter_shape
+        self.image_shape = image_shape
+        self.poolsize = poolsize
+        self.activation = activation
+
+        self.params = [self.W, self.b]
+
+    def output(self, input):
         conv_out = conv.conv2d(
             input=input,
             filters=self.W,
-            filter_shape=filter_shape,
-            image_shape=image_shape
+            filter_shape=self.filter_shape,
+            image_shape=self.image_shape
         )
 
         pooled_out = pool_2d(
             input=conv_out,
-            ds=poolsize,
+            ds=self.poolsize,
             ignore_border=True
         )
 
-        self.output = tt.tanh(
+        return self.activation(
             pooled_out + self.b.dimshuffle('x', 0, 'x', 'x')
         )
-        self.params = [self.W, self.b]
 
-    def _init_W(self, shape):
+    def _init(self, shape):
         fan_in = np.prod(shape[1:])
         fan_out = (shape[0] * np.prod(shape[2:]) / 4)
 
@@ -76,21 +92,21 @@ class ConvPoolLayer(object):
 
 class LSTMLayer(object):
 
-    def __init__(self, input, in_size, out_size):
+    def __init__(self, input, in_size, out_size, params=None):
         self.input = input
 
-        self.W = theano.shared(
-            value=self._init((in_size, out_size * 4)),
-            name='W', borrow=True
-        )
-        self.U = theano.shared(
-            value=self._init((out_size, out_size * 4)),
-            name='U', borrow=True
-        )
-        self.b = theano.shared(
-            value=np.zeros(out_size * 4, dtype=theano.config.floatX),
-            name='b', borrow=True
-        )
+        if params is None:
+            W_values = self._init((in_size, out_size))
+            U_values = self._init((out_size, out_size))
+            b_values = np.zeros(out_size * 4, dtype=theano.config.floatX)
+        else:
+            W_values = params[0]
+            U_values = params[1]
+            b_values = params[2]
+
+        self.W = theano.shared(value=W_values, name='W', borrow=True)
+        self.U = theano.shared(value=U_values, name='U', borrow=True)
+        self.b = theano.shared(value=b_values, name='b', borrow=True)
 
         def slice(x, n, dim):
             return x[n * dim:(n + 1) * dim]
@@ -120,34 +136,95 @@ class LSTMLayer(object):
         self.params = [self.W, self.U, self.b]
 
     def _init(self, shape):
-        return np.asarray(
-            RNG.uniform(low=-1, high=1, size=shape),
-            dtype=theano.config.floatX
-        )
+        return np.hstack([
+            self._ortho_weight(shape[0], shape[1]),
+            self._ortho_weight(shape[0], shape[1]),
+            self._ortho_weight(shape[0], shape[1]),
+            self._ortho_weight(shape[0], shape[1])
+        ])
+
+    def _ortho_weight(self, r, c):
+        W = np.random.randn(r, c)
+        u = np.linalg.svd(W)[0]
+        return u[:r, :c].astype(theano.config.floatX)
 
 
 class CTCLayer(object):
 
     def __init__(self, input, y):
-        self.input = input
+        import prepare_data
+        self.input = tt.nnet.softmax(input)
+        self.y = y
+        self.blank = len(prepare_data.CLASSES)
+        self.output = tt.argmax(self.input, axis=1)
 
-        def recurrence_relation(size):
-            big_I = tt.eye(size+2)
-            return (
-                tt.eye(size) + big_I[2:,1:-1] + big_I[2:,:-2] *
-                tt.cast(tt.arange(size) % 2, 'float32')
-            )
+    def plain_ctc(self):
+        l = tt.concatenate((self.y, [self.blank, self.blank]))
+        sec_diag = tt.neq(l[:-2], l[2:]) * tt.eq(l[1:-1], self.blank)
 
-        P = tt.nnet.softmax(self.input)[:, y]
-        rr = recurrence_relation(y.shape[0])
-
-        def step(curr, prev):
-            return curr * tt.dot(prev,rr)
-
-        probs,_ = theano.scan(
-            step,
-            sequences = [P],
-            outputs_info = [tt.eye(y.shape[0])[0]]
+        recurrence_relation = (
+            tt.eye(self.y.shape[0]) +
+            tt.eye(self.y.shape[0], k=1) +
+            tt.eye(self.y.shape[0], k=2) *
+            sec_diag.dimshuffle((0, 'x'))
         )
 
-        self.output = probs
+        pred_y = self.input[:, self.y]
+
+        probs, _ = theano.scan(
+            lambda curr, accum: curr * tt.dot(accum, recurrence_relation),
+            sequences=[pred_y],
+            outputs_info=[tt.eye(self.y.shape[0])[0]]
+        )
+
+        l_probs = tt.sum(probs[-1, -2:])
+        return -tt.log(l_probs)
+
+    def log_ctc(self):
+        def safe_log(x):
+            return tt.log(tt.maximum(x, 1e-20).astype(theano.config.floatX))
+
+        def logmul(x, y):
+            return x + y
+
+        def safe_exp(x):
+            return tt.exp(tt.minimum(x, 1e20).astype(theano.config.floatX))
+
+        def logadd_simple(x, y):
+            return x + safe_log(1 + safe_exp(y - x))
+
+        def logadd(x, y, *zs):
+            sum = logadd_simple(x, y)
+            for z in zs:
+                sum = logadd_simple(sum, z)
+            return sum
+
+        prev_mask = 1 - tt.eye(self.y.shape[0])[0]
+        prevprev_mask = (
+            tt.neq(self.y[:-2], self.y[2:]) *
+            tt.eq(self.y[1:-1], self.blank)
+        )
+        prevprev_mask = tt.concatenate(([0, 0], prevprev_mask))
+        prev_mask = safe_log(prev_mask)
+        prevprev_mask = safe_log(prevprev_mask)
+        prev = tt.arange(-1, self.y.shape[0]-1)
+        prevprev = tt.arange(-2, self.y.shape[0]-2)
+        log_pred_y = tt.log(self.input[:, self.y])
+
+        def step(curr, accum):
+            return logmul(
+                curr,
+                logadd(
+                    accum,
+                    logmul(prev_mask, accum[prev]),
+                    logmul(prevprev_mask, accum[prevprev])
+                )
+            )
+
+        log_probs, _ = theano.scan(
+            step,
+            sequences=[log_pred_y],
+            outputs_info=[safe_log(tt.eye(self.y.shape[0])[0])]
+        )
+
+        return -log_probs[-1, -1]
