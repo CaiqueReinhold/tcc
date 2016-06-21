@@ -8,7 +8,7 @@ import theano
 import theano.tensor as tt
 
 from netlayers import ConvPoolLayer, LSTMLayer, CTCLayer, DenseLayer
-from prepare_data import get_data, CLASSES, stringify
+from words import get_data, CLASSES, stringify
 
 
 class Network(object):
@@ -17,7 +17,7 @@ class Network(object):
         self.input = input
         self.y = y
 
-        h, w = 100, 20
+        h, w = 160, 20
         fn1, fh1, fw1 = 3, 15, 3
         fn2, fh2, fw2 = 5, 10, 2
 
@@ -81,7 +81,7 @@ class Network(object):
             self.layer4.params
         )
 
-    def save_params(self, filename='net2.pkl.gzip'):
+    def save_params(self, filename='net2_words.pkl.gzip'):
         def unwrap(shared):
             return [p.get_value() for p in shared]
 
@@ -99,7 +99,7 @@ class Network(object):
         f.close()
         print '##PARAMS SAVED###'
 
-    def train(self, learning_rate=0.001, n_epochs=50):
+    def train(self, learning_rate=0.0001, n_epochs=150):
         print '----BUILDING MODEL----'
 
         cost = self.ctc.log_ctc()
@@ -145,10 +145,10 @@ class Network(object):
 
 
 def main():
-    # f = gzip.open('net2.pkl.gzip', 'rb')
-    # params = cPickle.load(f)
-    # f.close()
-    params = None
+    f = gzip.open('net2_words.pkl.gzip', 'rb')
+    params = cPickle.load(f)
+    f.close()
+    # params = None
     nnet = Network(params=params)
     nnet.train()
 

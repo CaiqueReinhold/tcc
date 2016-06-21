@@ -1,0 +1,315 @@
+----BUILDING MODEL----
+----TRAINING MODEL----
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 0/0 mean cost 19.345583
+elapsed time: 18 mins
+target:  to
+pred:  oeee
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 0/1 mean cost 15.514673
+elapsed time: 35 mins
+target:  knowing
+pred:  oooereeeeeedeggg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 0/2 mean cost 14.951083
+elapsed time: 52 mins
+target:  childless
+pred:  aiiiiitthhheee
+epoch 1/0 mean cost 15.271174
+elapsed time: 70 mins
+target:  to
+pred:  hooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 1/1 mean cost 13.101700
+elapsed time: 88 mins
+target:  knowing
+pred:  eeeereeeessddygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 1/2 mean cost 12.884044
+elapsed time: 105 mins
+target:  childless
+pred:  iiiii'ttllseee
+epoch 2/0 mean cost 13.359198
+elapsed time: 124 mins
+target:  to
+pred:  tooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 2/1 mean cost 11.571136
+elapsed time: 141 mins
+target:  knowing
+pred:  eeeereeeessddygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 2/2 mean cost 11.327601
+elapsed time: 161 mins
+target:  childless
+pred:  ahhii'ttllisss
+epoch 3/0 mean cost 11.875485
+elapsed time: 181 mins
+target:  to
+pred:  eooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 3/1 mean cost 10.293612
+elapsed time: 197 mins
+target:  knowing
+pred:  eeeereesessddygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 3/2 mean cost 10.252562
+elapsed time: 215 mins
+target:  childless
+pred:  ahhii'ttllcsss
+epoch 4/0 mean cost 10.765458
+elapsed time: 232 mins
+target:  to
+pred:  tooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 4/1 mean cost 9.388678
+elapsed time: 249 mins
+target:  knowing
+pred:  eeeereeeeusddygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 4/2 mean cost 9.215777
+elapsed time: 265 mins
+target:  childless
+pred:  whhiilidllesss
+epoch 5/0 mean cost 9.905246
+elapsed time: 282 mins
+target:  to
+pred:  tooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 5/1 mean cost 8.680573
+elapsed time: 299 mins
+target:  knowing
+pred:  eeeereeeeusidygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 5/2 mean cost 8.552769
+elapsed time: 315 mins
+target:  childless
+pred:  whhiilidhlesss
+epoch 6/0 mean cost 9.200042
+elapsed time: 332 mins
+target:  to
+pred:  tooo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 6/1 mean cost 8.065922
+elapsed time: 349 mins
+target:  knowing
+pred:  eeeereeonusidygg
+epoch 6/2 mean cost 8.067786
+elapsed time: 365 mins
+target:  childless
+pred:  whhiilidhlesss
+epoch 7/0 mean cost 8.652785
+elapsed time: 382 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 7/1 mean cost 7.559519
+elapsed time: 399 mins
+target:  knowing
+pred:  eeeereeoouuidngg
+epoch 7/2 mean cost 7.591265
+elapsed time: 415 mins
+target:  childless
+pred:  whhiilldhlesss
+epoch 8/0 mean cost 8.131282
+elapsed time: 432 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 8/1 mean cost 7.121801
+elapsed time: 448 mins
+target:  knowing
+pred:  ebeereeonuuibygg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 8/2 mean cost 7.071887
+elapsed time: 465 mins
+target:  childless
+pred:  whhiilldhlesss
+epoch 9/0 mean cost 7.651187
+elapsed time: 482 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 9/1 mean cost 6.721426
+elapsed time: 498 mins
+target:  knowing
+pred:  ebeerrooouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 9/2 mean cost 6.601400
+elapsed time: 515 mins
+target:  childless
+pred:  chhiilldhlesss
+epoch 10/0 mean cost 7.227641
+elapsed time: 532 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 10/1 mean cost 6.355417
+elapsed time: 548 mins
+target:  knowing
+pred:  ebeereooouuiingg
+epoch 10/2 mean cost 6.612285
+elapsed time: 565 mins
+target:  childless
+pred:  chhiilldllesss
+epoch 11/0 mean cost 7.441076
+elapsed time: 582 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 11/1 mean cost 6.046113
+elapsed time: 598 mins
+target:  knowing
+pred:  eleerrooouuiingg
+epoch 11/2 mean cost 6.050164
+elapsed time: 615 mins
+target:  childless
+pred:  cthiilldllesss
+epoch 12/0 mean cost 6.634546
+elapsed time: 632 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 12/1 mean cost 5.741813
+elapsed time: 648 mins
+target:  knowing
+pred:  ebeerreoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 12/2 mean cost 5.732086
+elapsed time: 665 mins
+target:  childless
+pred:  cthiilldllesss
+epoch 13/0 mean cost 6.371851
+elapsed time: 682 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 13/1 mean cost 5.517113
+elapsed time: 698 mins
+target:  knowing
+pred:  eleeaeeoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 13/2 mean cost 5.429805
+elapsed time: 717 mins
+target:  childless
+pred:  cthiilldhlesss
+epoch 14/0 mean cost 5.927055
+elapsed time: 738 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 14/1 mean cost 5.230693
+elapsed time: 758 mins
+target:  knowing
+pred:  elleaeeoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 14/2 mean cost 5.131646
+elapsed time: 778 mins
+target:  childless
+pred:  cthiilldhlesss
+epoch 15/0 mean cost 5.744048
+elapsed time: 798 mins
+target:  to
+pred:  ttoo
+epoch 15/1 mean cost 5.299129
+elapsed time: 817 mins
+target:  knowing
+pred:  ebleaeaoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 15/2 mean cost 4.895488
+elapsed time: 836 mins
+target:  childless
+pred:  cthiilldhlesss
+epoch 16/0 mean cost 5.466872
+elapsed time: 858 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 16/1 mean cost 4.804356
+elapsed time: 876 mins
+target:  knowing
+pred:  elleaeaoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 16/2 mean cost 4.708520
+elapsed time: 895 mins
+target:  childless
+pred:  cthiilldhlesss
+epoch 17/0 mean cost 5.139786
+elapsed time: 917 mins
+target:  to
+pred:  ttoo
+epoch 17/1 mean cost 4.945943
+elapsed time: 935 mins
+target:  knowing
+pred:  ellaaeeoouuiingg
+epoch 17/2 mean cost 4.768631
+elapsed time: 952 mins
+target:  childless
+pred:  chhiilldleesss
+epoch 18/0 mean cost 4.979739
+elapsed time: 969 mins
+target:  to
+pred:  ttoo
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 18/1 mean cost 4.421548
+elapsed time: 986 mins
+target:  knowing
+pred:  eleeaeaoouuiingg
+##SAVING PARAMS##
+##PARAMS SAVED###
+epoch 18/2 mean cost 4.318045
+elapsed time: 1003 mins
+target:  childless
+pred:  chhiilldheesss
+epoch 19/0 mean cost 4.678655
+elapsed time: 1022 mins
+target:  to
+pred:  ttoo
+epoch 19/1 mean cost 9.689940
+elapsed time: 1042 mins
+target:  knowing
+pred:  eleeseeoouuidngg
+epoch 19/2 mean cost 4.351833
+elapsed time: 1063 mins
+target:  childless
+pred:  chhiilldheesss
+epoch 20/0 mean cost 4.505796
+elapsed time: 1082 mins
+target:  to
+pred:  ttoo
+epoch 20/1 mean cost 4.443047
+elapsed time: 1099 mins
+target:  knowing
+pred:  eleennnoouuiingg
+
