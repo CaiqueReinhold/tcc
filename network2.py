@@ -2,13 +2,15 @@ import gc
 import cPickle
 import gzip
 from datetime import datetime
+import itertools
+from random import randint
 
 import numpy as np
 import theano
 import theano.tensor as tt
 
 from netlayers import ConvPoolLayer, LSTMLayer, CTCLayer, DenseLayer
-from words import get_data, CLASSES, stringify
+from words import get_data, CLASSES, stringify, load_img
 
 
 class Network(object):
@@ -81,6 +83,11 @@ class Network(object):
             self.layer4.params
         )
 
+        self.pred = theano.function(
+        	inputs=[self.input],
+        	outputs=self.ctc.output
+        )
+
     def save_params(self, filename='net2_words.pkl.gzip'):
         def unwrap(shared):
             return [p.get_value() for p in shared]
@@ -99,6 +106,11 @@ class Network(object):
         f.close()
         print '##PARAMS SAVED###'
 
+    def predict(self, img):
+    	net_out = self.pred(img)
+    	net_out = stringify(net_out)
+    	return ''.join(ch for ch, _ in itertools.groupby(net_out))
+
     def train(self, learning_rate=0.0001, n_epochs=150):
         print '----BUILDING MODEL----'
 
@@ -115,10 +127,7 @@ class Network(object):
             updates=updates
         )
 
-        test = theano.function(
-            inputs=[self.input],
-            outputs=self.ctc.output,
-        )
+        test = self.pred
 
         print '----TRAINING MODEL----'
 
@@ -137,8 +146,9 @@ class Network(object):
 
                 print 'epoch %d/%d mean cost %f' % (epoch, i, mean_cost)
                 print 'elapsed time: %d mins' % ((datetime.now() - start_time).seconds / 60)
-                print 'target: ', stringify(y[1])
-                print 'pred: ', stringify(test(x[1]))
+                rand_index = randint(0, 27484)
+                print 'target: ', stringify(y[rand_index])
+                print 'pred: ', stringify(test(x[rand_index]))
 
                 del x, y
                 gc.collect()
@@ -151,6 +161,14 @@ def main():
     # params = None
     nnet = Network(params=params)
     nnet.train()
+    # x, y = get_data()
+
+    # import cv2
+    # for i in range(300, 350):
+    # 	print 'target:', stringify(y[i])
+    # 	print 'pred:', nnet.predict(x[i])
+    # 	cv2.imshow('x', x[i])
+    # 	cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()

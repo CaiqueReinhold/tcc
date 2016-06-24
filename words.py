@@ -1,11 +1,14 @@
 import os
 from os import path
+import cPickle
+import difflib
 
 import numpy as np
 import cv2
 import theano
 
 FILES_PATH = path.join('/', 'home', 'caique', 'words')
+# PROCESSED = path.join(FILES_PATH, 'proc_test')
 PROCESSED = path.join(FILES_PATH, 'processed')
 if not path.isdir(PROCESSED):
     os.mkdir(PROCESSED)
@@ -22,6 +25,11 @@ def parse_line(line):
         'gray': int(vals[2]),
         'text': vals[8]
     }
+
+
+def CER(a, b):
+	dif = difflib.ndiff(a, b)
+	return sum([1 for d in dif if d[0] != ' ']) / float(len(a))
 
 
 def stringify(indexes):
@@ -95,14 +103,22 @@ def pre_process_img(img_info):
 
 
 def main():
-    # with open(path.join(FILES_PATH, 'words.txt')) as file:
-    #     file.seek(802) # skip header
-    #     data = [parse_line(line) for line in file]
-    #     data = [item for item in data if len(item['text']) > 1 and item['ok']]
-    #     for item in data:
-    #         pre_process_img(item)
-    #     print len(data)
-    get_data(2)
+    with open(path.join(FILES_PATH, 'words.txt')) as file:
+        file.seek(802) # skip header
+        data = [parse_line(line) for line in file]
+        data = [item for item in data if len(item['text']) > 1 and not item['ok']]
+        
+        test_data = []
+        da = os.listdir(PROCESSED)
+        da = [file.split('.')[0] for file in da]
+
+        for item in data:
+        	if item['image'] in da:
+        		test_data.append(item)
+
+        f = open('test.pkl', 'wb')
+        cPickle.dump(test_data, f)
+        f.close()
 
 
 if __name__ == '__main__':
